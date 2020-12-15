@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "outDir": "./dist/",
+    "declaration": true,
+    "strict": true,
+    "noImplicitReturns": true,
+    "noImplicitAny": true,
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "target": "ES6",
+    "allowJs": false,
+    "importHelpers": true,
+    "types": ["node"]
+  },
+  "include": ["./src/**/*"]
+}
