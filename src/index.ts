@@ -32,7 +32,7 @@ const createLogger = (config: LogLevel) => {
 
 const enhanceStatechartWithMetaTest = <TContext, TEvents extends EventObject, TTestContext>(
   statechart: MachineConfig<TContext, any, TEvents>,
-  tests: StatesTestFunctions<TContext, TTestContext>,
+  tests: StatesTestFunctions<TContext, TTestContext> = {},
   logger: Logger,
 ): any => ({
   ...statechart,
