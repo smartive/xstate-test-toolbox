@@ -91,7 +91,16 @@ const enhanceTestEvents = <TTestContext>(
   );
 
 const stringifySegments = (segments: TestSegmentResult['segment'][]) =>
-  segments.reduce((s, { state, event }) => [...s, state.value.toString(), event.type], [] as string[]).join(' → ');
+  segments
+    .reduce(
+      (s, { state, event }) => [
+        ...s,
+        typeof state.value === 'string' ? state.value : `"${state.toStrings(state.value, '":"').pop() || ''}"`,
+        event.type,
+      ],
+      [] as string[],
+    )
+    .join(' → ');
 
 const enrichPathDescription = <TTestContext>(path: TestPath<TTestContext>) => ({
   ...path,
