@@ -1,6 +1,6 @@
 import { createModel } from '@xstate/test';
 import type { EventExecutor, TestEventsConfig, TestPath, TestPlan, TestSegmentResult } from '@xstate/test/lib/types';
-import type { AnyEventObject, EventObject, MachineConfig, MachineOptions, State } from 'xstate';
+import type { AnyEventObject, EventObject, MachineConfig, MachineOptions, State, StateNodeConfig } from 'xstate';
 import { Machine } from 'xstate';
 
 export type StatesTestFunctions<TContext, TTestContext> = {
@@ -30,9 +30,9 @@ const createLogger = (config: LogLevel) => {
   };
 };
 
-const enhanceStatechartWithMetaTest = <TContext, TEvents extends EventObject, TTestContext>(
-  statechart: MachineConfig<TContext, any, TEvents>,
-  tests: StatesTestFunctions<TContext, TTestContext> = {},
+const enhanceStatechartWithMetaTest = <TTestContext>(
+  statechart: MachineConfig<any, any, AnyEventObject>,
+  tests: StatesTestFunctions<any, TTestContext> = {},
   logger: Logger,
 ): any => ({
   ...statechart,
@@ -48,7 +48,7 @@ const enhanceStatechartWithMetaTest = <TContext, TEvents extends EventObject, TT
           : {
               meta: {
                 ...stateValue.meta,
-                test: (testContext: TTestContext, state: State<TContext, any>) => {
+                test: (testContext: TTestContext, state: State<any, any>) => {
                   logger(LogLevel.Debug, `    ${stateKey}`);
 
                   if (typeof test === 'function') {
@@ -128,9 +128,7 @@ const getUniqueTestPlans = <TTestContext, TContext>(plans: TestPlan<TTestContext
   }, []);
 };
 
-const getGuardCombinations = <TContext, TEvents extends EventObject>(
-  guards: MachineOptions<TContext, TEvents>['guards'],
-) => {
+const getGuardCombinations = (guards: MachineOptions<any, EventObject>['guards']) => {
   const guardKeys = Object.keys(guards);
   const guardCombinations: Record<string, () => boolean>[] = [];
   for (let i = 0; i < 1 << guardKeys.length; i++) {
@@ -164,11 +162,10 @@ ${testPlans.reduce(
 =================================================================`;
 
 export const createTestPlans = <
-  TMachinConfig,
-  TMachineOptions extends Record<string, any>,
+  TMachinConfig extends StateNodeConfig<TContext, any, any>,
+  TMachineOptions extends MachineOptions<TContext, any>,
   TTestContext,
-  TContext,
-  TEvents extends EventObject = AnyEventObject
+  TContext
 >({
   statechart,
   tests,
@@ -183,9 +180,9 @@ export const createTestPlans = <
   logLevel?: LogLevel;
 }): TestPlan<TTestContext, TContext>[] => {
   const logger = createLogger(logLevel);
-  const testStatecart = enhanceStatechartWithMetaTest<TContext, TEvents, TTestContext>(statechart, tests, logger);
+  const testStatecart = enhanceStatechartWithMetaTest(statechart, tests, logger);
   const events = enhanceTestEvents(testEvents, logger);
-  const guardCombinations = getGuardCombinations<TContext, TEvents>(guards);
+  const guardCombinations = getGuardCombinations(guards);
   const possibleTestPlans =
     guardCombinations.length > 0
       ? guardCombinations.reduce(
