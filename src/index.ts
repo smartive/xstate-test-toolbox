@@ -1,6 +1,6 @@
 import { createModel } from '@xstate/test';
 import type { EventExecutor, TestEventsConfig, TestPath, TestPlan, TestSegmentResult } from '@xstate/test/lib/types';
-import type { AnyEventObject, EventObject, MachineConfig, MachineOptions, State, StateNodeConfig } from 'xstate';
+import type { AnyEventObject, EventObject, MachineConfig, MachineOptions, State, StateNode, StateNodeConfig } from 'xstate';
 import { Machine } from 'xstate';
 
 export type StatesTestFunctions<TContext, TTestContext> = {
@@ -161,28 +161,21 @@ ${testPlans.reduce(
 
 =================================================================`;
 
-export const createTestPlans = <
-  TMachinConfig extends StateNodeConfig<TContext, any, any>,
-  TMachineOptions extends MachineOptions<TContext, any>,
-  TTestContext,
-  TContext
->({
-  statechart,
+export const createTestPlans = <TMachineConfig extends StateNode<TContext, any, any>, TTestContext, TContext = any>({
+  machine,
   tests,
   testEvents,
-  machineConfig: { guards = {} },
   logLevel = LogLevel.None,
 }: {
-  statechart: TMachinConfig;
+  machine: TMachineConfig;
   tests: StatesTestFunctions<TContext, TTestContext>;
   testEvents: TestEventsConfig<TTestContext>;
-  machineConfig: TMachineOptions;
   logLevel?: LogLevel;
 }): TestPlan<TTestContext, TContext>[] => {
   const logger = createLogger(logLevel);
-  const testStatecart = enhanceStatechartWithMetaTest(statechart, tests, logger);
+  const testStatecart = enhanceStatechartWithMetaTest(machine.config, tests, logger);
   const events = enhanceTestEvents(testEvents, logger);
-  const guardCombinations = getGuardCombinations(guards);
+  const guardCombinations = getGuardCombinations(machine.options.guards);
   const possibleTestPlans =
     guardCombinations.length > 0
       ? guardCombinations.reduce(
