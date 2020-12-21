@@ -1,6 +1,6 @@
 import { createModel } from '@xstate/test';
 import type { EventExecutor, TestEventsConfig, TestPath, TestPlan, TestSegmentResult } from '@xstate/test/lib/types';
-import type { AnyEventObject, EventObject, MachineConfig, MachineOptions, State, StateNode, StateNodeConfig } from 'xstate';
+import type { AnyEventObject, EventObject, MachineConfig, MachineOptions, State, StateNode } from 'xstate';
 import { Machine } from 'xstate';
 
 export type StatesTestFunctions<TContext, TTestContext> = {
@@ -161,16 +161,21 @@ ${testPlans.reduce(
 
 =================================================================`;
 
+const shouldSkip = (given: string, skips: (RegExp | string)[]) =>
+  !skips.some((skip) => (skip instanceof RegExp ? skip.test(given) : given === skip));
+
 export const createTestPlans = <TMachineConfig extends StateNode<TContext, any, any>, TTestContext, TContext = any>({
   machine,
   tests,
   testEvents,
   logLevel = LogLevel.None,
+  skip,
 }: {
   machine: TMachineConfig;
   tests: StatesTestFunctions<TContext, TTestContext>;
   testEvents: TestEventsConfig<TTestContext>;
   logLevel?: LogLevel;
+  skip?: { paths?: (RegExp | string)[]; plans?: (RegExp | string)[] };
 }): TestPlan<TTestContext, TContext>[] => {
   const logger = createLogger(logLevel);
   const testStatecart = enhanceStatechartWithMetaTest(machine.config, tests, logger);
@@ -189,8 +194,14 @@ export const createTestPlans = <TMachineConfig extends StateNode<TContext, any, 
         )
       : createModel<TTestContext, TContext>(Machine(testStatecart)).withEvents(events).getSimplePathPlans();
   const testPlans = getUniqueTestPlans(possibleTestPlans);
+  const filteredPlans = testPlans
+    .filter(({ description }) => shouldSkip(description, skip?.plans || []))
+    .map(({ paths, ...plan }) => ({
+      ...plan,
+      paths: paths.filter(({ description }) => shouldSkip(description, skip?.paths || [])),
+    }));
 
-  logger(LogLevel.Info, stringifyTestPlans(testPlans));
+  logger(LogLevel.Info, stringifyTestPlans(filteredPlans));
 
-  return testPlans;
+  return filteredPlans;
 };
