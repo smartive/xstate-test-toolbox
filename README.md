@@ -18,7 +18,7 @@ import { createTestPlans, StatesTestFunctions } from '@smartive/xstate-test-tool
 import { FetchInterceptor, mockHeaders, mockResponse, RequestCallCountMock } from '@smartive/testcafe-utils';
 import { TestEventsConfig } from '@xstate/test/lib/types';
 import { RequestMock } from 'testcafe';
-import { Context, machineConfig, statechart } from './state-charts';
+import { Context, machine } from './machine-under-test';
 // ...
 
 type TestContext = {
@@ -99,10 +99,9 @@ const testEvents: TestEventsConfig<TestContext> = {
 };
 
 createTestPlans({
-  statechart,
+  machine,
   tests,
   testEvents,
-  machineConfig,
   // add logLevel: LogLevel.INFO for some output which plans/paths are generated
 }).forEach(
   ({ description: plan, paths }) => {
