@@ -1,7 +1,7 @@
 {
   "name": "@smartive/xstate-test-toolbox",
   "version": "0.0.0-development",
-  "description": "Toolbox containing various helpers when working with TestCafe.",
+  "description": "This package contains the helper `createTestPlans` which can be used with xstate and @xstate/test.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "publishConfig": {

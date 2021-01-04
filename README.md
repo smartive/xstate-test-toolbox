@@ -1,12 +1,12 @@
 # @smartive/xstate-test-toolbox
 
-This package contains the helper `createTestPlans` which we use for our work with xstate, @xstate/test and TestCafe.
+This package contains the helper `createTestPlans` which can be used with xstate and @xstate/test.
 
 ## `createTestPlans`
 
-This functions add the `meta`-property to every state and adds a test if it is defined within the `tests` property. (see in example) Beside that it generates all possible test plans and paths for all possible states of your guards within the machineConfig.
+This function adds the `meta`-property to every state and a test if it is defined within `tests`. (see in example) Beside that it generates all possible test simple path plans for all possible combinations of your guards.
 
-⚠️ Attention: Your statechart must consist of only string references for guards, actions and services otherwise the testing will break.
+⚠️ Attention: Your statechart must consist of only string references to guards, actions and services otherwise the testing will break.
 
 ### Example
 
