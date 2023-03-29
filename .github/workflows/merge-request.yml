@@ -1,0 +1,19 @@
+name: Test Merge Request
+
+on:
+  pull_request:
+    branches:
+      - 'main'
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@main
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '18.x'
+      - run: npm ci
+      - run: npm run build
+      - run: npm run test
