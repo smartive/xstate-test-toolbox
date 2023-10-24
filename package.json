@@ -16,7 +16,7 @@
     "test": "npm run lint"
   },
   "engines": {
-    "node": "^18.0.0",
+    "node": "^20.0.0",
     "npm": "^10.0.0"
   },
   "repository": {
@@ -59,7 +59,7 @@
     "@xstate/test": "^0.4.1"
   },
   "devDependencies": {
-    "@types/node": "^18",
+    "@types/node": "^20.0.0",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
     "eslint": "^8.0.0",
