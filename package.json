@@ -67,7 +67,7 @@
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-prettier": "^4.0.0",
     "prettier": "^2.2.1",
-    "npm-run-all2": "^7.0.0",
+    "npm-run-all2": "^8.0.0",
     "typescript": "^4.1.3",
     "xstate": "^4.13.0",
     "@xstate/test": "^0.4.1"
